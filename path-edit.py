@@ -6,17 +6,7 @@ set_checkpoint = 0
 
 # load current path
 path = Path()
-path_file = open('path.txt', 'r')
-for line in path_file:
-    words = [int(w) for w in line.split()]
-    path.add_dot(words[0], words[1], words[2], words[3:])
-path_file.close()
-
-checkpoint_file = open('checkpoints.txt', 'r')
-for line in checkpoint_file:
-    words = [int(w) for w in line.split()]
-    path.checkpoints[words[0]] = words[1]
-checkpoint_file.close()
+path.load()
 
 map = cv.imread('roadmask.png')
 
@@ -64,18 +54,7 @@ while True:
         break
 
     if key == 13:
-        path_file = open('path.txt', 'w')
-        for id, dot in path.dots.items():
-            path_file.write('{} {} {} '.format(id, dot.x, dot.y))
-            for adj in dot.adj:
-                path_file.write('{} '.format(adj))
-            path_file.write('\n')
-        path_file.close()
-
-        checkpoint_file = open('checkpoints.txt', 'w')
-        for checkpoint, dot_id in path.checkpoints.items():
-            checkpoint_file.write('{} {} \n'.format(checkpoint, dot_id))
-        checkpoint_file.close()
+        path.save()
 
     if key in range(48, 59):
         set_checkpoint = (key - 9) % 10 + 1

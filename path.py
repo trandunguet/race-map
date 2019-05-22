@@ -17,6 +17,33 @@ class Path:
         self.dots = {}
         self.checkpoints = {}
 
+    def load(self):
+        path_file = open('path.txt', 'r')
+        for line in path_file:
+            words = [int(w) for w in line.split()]
+            self.add_dot(words[0], words[1], words[2], words[3:])
+        path_file.close()
+
+        checkpoint_file = open('checkpoints.txt', 'r')
+        for line in checkpoint_file:
+            words = [int(w) for w in line.split()]
+            self.checkpoints[words[0]] = words[1]
+        checkpoint_file.close()
+
+    def save(self):
+        path_file = open('path.txt', 'w')
+        for id, dot in self.dots.items():
+            path_file.write('{} {} {} '.format(id, dot.x, dot.y))
+            for adj in dot.adj:
+                path_file.write('{} '.format(adj))
+            path_file.write('\n')
+        path_file.close()
+
+        checkpoint_file = open('checkpoints.txt', 'w')
+        for checkpoint, dot_id in self.checkpoints.items():
+            checkpoint_file.write('{} {} \n'.format(checkpoint, dot_id))
+        checkpoint_file.close()
+
     def delete_dot(self, x, y):
         nearest_id = self.find_two_nearest_dots(x, y)[0]
         for adj_id in self.dots[nearest_id].adj:
