@@ -15,7 +15,7 @@ class Path:
     def __init__(self):
         self.next_dot_id = 0
         self.dots = {}
-        self.checkpoints = []
+        self.checkpoints = {}
 
     def delete_dot(self, x, y):
         nearest_id = self.find_two_nearest_dots(x, y)[0]
