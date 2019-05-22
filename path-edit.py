@@ -30,19 +30,20 @@ def mouse_handler(event, x, y, flags, param):
     if event == cv.EVENT_LBUTTONDOWN:
         if set_checkpoint == 0: 
             path.create_dot(x, y, 1)
-            refresh_view()
         else:
             path.checkpoints[set_checkpoint] = path.find_two_nearest_dots(x, y)[0]
             set_checkpoint = 0
-            refresh_view()
 
-    if event == cv.EVENT_MBUTTONDOWN:
+    elif event == cv.EVENT_MBUTTONDOWN:
         path.create_dot(x, y, 2)
-        refresh_view()
 
-    if event == cv.EVENT_RBUTTONDOWN:
+    elif event == cv.EVENT_RBUTTONDOWN:
         path.delete_dot(x, y)
-        refresh_view()
+
+    else:
+        return
+        
+    refresh_view()
 
 # bind the callback function to window
 refresh_view()
