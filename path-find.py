@@ -51,6 +51,9 @@ start = path.dots[path.checkpoints[5]]
 prev_start = path.dots[108]
 for checkpoint in checkpoints[1:]:
     track = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoint]])
+    if not track:
+        print("No path found!")
+        exit()
     start = track
     prev_start = track.prev
 
