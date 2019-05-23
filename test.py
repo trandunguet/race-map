@@ -9,4 +9,4 @@ for line in output:
     img_view = img.copy()
     cv.circle(img_view, tuple(words), 4, (255, 255, 255), -1)
     cv.imshow('view', img_view)
-    cv.waitKey()
+    cv.waitKey(30)
