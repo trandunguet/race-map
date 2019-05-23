@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from queue import Queue
 import math
 
@@ -52,13 +53,14 @@ for checkpoint in checkpoints[1:]:
     track = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoint]])
     start = track
     prev_start = track.prev
-    
+
 output = []
 while track.prev is not None:
     cv.circle(map_view, (track.x, track.y), 4, (255, 0, 0), -1)
     output.append(track)
     track = track.prev
-for dot in output[::-1]:
-    output_file.write('{} {}\n'.format(dot.x, dot.y))
 cv.imshow('map', map_view)
 cv.waitKey()
+
+for dot in output[::-1]:
+    output_file.write('{} {}\n'.format(dot.x, dot.y))
