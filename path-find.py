@@ -35,7 +35,7 @@ def bfs(prev_start, start, finish):
             if adj.prev_mark[current.id]:
                 continue
             adj.prev_mark[current] = True
-            if angle(current.prev, current, adj) > math.pi / 3:
+            if angle(current.prev, current, adj) > math.pi / 180 * 70:
                 continue
 
             queue.put(adj.get_clone(current))
