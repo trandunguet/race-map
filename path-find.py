@@ -42,6 +42,7 @@ def bfs(prev_start, start, finish):
 map_view = cv.imread('roadmask.png')
 
 input_file = open('input.txt', 'r')
+output_file = open('output.txt', 'w')
 for line in input_file:
     checkpoints = [int(w) for w in line.split()]
 
@@ -49,10 +50,15 @@ start = path.dots[path.checkpoints[5]]
 prev_start = path.dots[108]
 for checkpoint in checkpoints[1:]:
     track = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoint]])
-    start = path.dots[path.checkpoints[checkpoint]]
+    start = track
     prev_start = track.prev
-    while track.prev is not None:
-        cv.circle(map_view, (track.x, track.y), 4, (255, 0, 0), -1)
-        track = track.prev
-    cv.imshow('map', map_view)
-    cv.waitKey()
+    
+output = []
+while track.prev is not None:
+    cv.circle(map_view, (track.x, track.y), 4, (255, 0, 0), -1)
+    output.append(track)
+    track = track.prev
+for dot in output[::-1]:
+    output_file.write('{} {}\n'.format(dot.x, dot.y))
+cv.imshow('map', map_view)
+cv.waitKey()
