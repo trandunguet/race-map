@@ -1,7 +1,7 @@
 import math
 
 class Dot:
-    def __init__(self, id, x, y, adj, prev=None):
+    def __init__(self, id, x, y, adj, prev=None, d=0):
         self.id = id
         self.x = x
         self.y = y
@@ -9,6 +9,7 @@ class Dot:
         self.prev_mark = {}
         self.prev = prev
         self.reset()
+        self.d = d
 
     def __sub__(self, other):
         return Dot(None, self.x - other.x, self.y - other.y, None)
@@ -23,7 +24,7 @@ class Dot:
         return math.sqrt((self.x - x) ** 2 + (self.y - y) ** 2)
 
     def get_clone(self, prev):
-        return Dot(self.id, self.x, self.y, self.adj, prev=prev)
+        return Dot(self.id, self.x, self.y, self.adj, prev=prev, d=prev.d+1)
         self.prev_mark[prev.id] = True
 
     def reset(self):

@@ -52,6 +52,17 @@ def bfs(prev_start, start, finish):
 
     return result
 
+def max_track(a, b):
+    if len(b) != len(a):
+        return a
+    c = []
+    for i in range(len(a)):
+        if a[i].d < b[i].d:
+            c.append(a[i])
+        else:
+            c.append(b[i])
+    return c
+
 map_view = cv.imread('roadmask.png')
 
 input_file = open('input.txt', 'r')
@@ -61,14 +72,15 @@ for line in input_file:
 
 start = path.dots[path.checkpoints[5]]
 prev_start = path.dots[108]
-for checkpoint in checkpoints[1:]:
-    track = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoint]])[0]
-    # print(track)
-    if not track:
-        print("No path found!")
-        exit()
-    start = track
-    prev_start = track.prev
+best_track = prev_tracks = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoints[1]]])
+for checkpoint in checkpoints[2:]:
+    best_track = []
+    for prev_track in prev_tracks:
+        track = bfs(prev_track.prev, prev_track,  path.dots[path.checkpoints[checkpoint]])
+        best_track = max_track(track, best_track)
+    prev_tracks = best_track
+
+track = best_track[0]
 
 output = []
 while track.prev is not None:
