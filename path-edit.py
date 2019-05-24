@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import cv2 as cv
 from path import Path, Dot
 

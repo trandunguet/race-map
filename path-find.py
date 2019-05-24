@@ -1,15 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from queue import Queue
 import math
 
-import cv2 as cv
+import json
+import paho.mqtt.client as mqtt
 
 from path import Dot, Path
 
-debug = False
-
-path = Path()
-path.load()
 
 def angle(a, b, c):
     v1 = b - a
@@ -26,21 +23,11 @@ def bfs(prev_start, start, finish):
     while not queue.empty():
         current = queue.get()
 
-        if debug:
-            cv.circle(map_view, (current.x, current.y), 4, (255, 0, 0), -1)
-            cv.imshow('map', map_view)
-            cv.waitKey()
-
         if current.id == finish.id:
             result.append(current)
             
         for adj_id in current.adj:
             adj = path.dots[adj_id]
-
-            if debug:
-                cv.circle(map_view, (adj.x, adj.y), 4, (0, 0, 255), -1)
-                cv.imshow('map', map_view)
-                cv.waitKey()
 
             if adj.prev_mark[current.id]:
                 continue
@@ -63,32 +50,52 @@ def max_track(a, b):
             c.append(b[i])
     return c
 
-map_view = cv.imread('roadmask.png')
+def process(checkpoints):
+    print(checkpoints)
+    start = path.dots[path.checkpoints[5]]
+    prev_start = path.dots[108]
+    best_track = prev_tracks = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoints[1]]])
+    for checkpoint in checkpoints[2:]:
+        best_track = []
+        for prev_track in prev_tracks:
+            track = bfs(prev_track.prev, prev_track,  path.dots[path.checkpoints[checkpoint]])
+            best_track = max_track(track, best_track)
+        prev_tracks = best_track
 
-input_file = open('input.txt', 'r')
-output_file = open('output.txt', 'w')
-for line in input_file:
-    checkpoints = [int(w) for w in line.split()]
+    track = best_track[0]
 
-start = path.dots[path.checkpoints[5]]
-prev_start = path.dots[108]
-best_track = prev_tracks = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoints[1]]])
-for checkpoint in checkpoints[2:]:
-    best_track = []
-    for prev_track in prev_tracks:
-        track = bfs(prev_track.prev, prev_track,  path.dots[path.checkpoints[checkpoint]])
-        best_track = max_track(track, best_track)
-    prev_tracks = best_track
+    output = []
+    while track.prev is not None:
+        output.append(track)
+        track = track.prev
 
-track = best_track[0]
+    output_file = open('output.txt', 'w')
+    for dot in output[::-1]:
+        output_file.write('{} {}\n'.format(dot.x, dot.y))
+    output_file.close()
 
-output = []
-while track.prev is not None:
-    cv.circle(map_view, (track.x, track.y), 4, (255, 0, 0), -1)
-    output.append(track)
-    track = track.prev
-cv.imshow('map', map_view)
-cv.waitKey()
+def on_connect(client, userdata, flags, rc):
+	m_client.subscribe("route")
+	print("connect to broker")
 
-for dot in output[::-1]:
-    output_file.write('{} {}\n'.format(dot.x, dot.y))
+def on_message(client, userdata, message):
+	datastore = json.loads(str(message.payload))
+	if datastore["team"] == team_id:
+		process([x for x in datastore["route"]])
+
+def init():	
+	m_client.on_message=on_message
+	m_client.on_connect = on_connect
+	m_client.connect(broker, 1883, 60)
+	m_client.loop_forever()
+
+if __name__ == '__main__':
+    debug = False
+    # broker="192.168.1.124"  # ip server
+    m_client = mqtt.Client()
+    broker="localhost"
+    team_id = 1
+
+    path = Path()
+    path.load()
+    init()
