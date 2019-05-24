@@ -24,7 +24,7 @@ def bfs(prev_start, start, finish):
     while not queue.empty():
         current = queue.get()
 
-        if current.id == finish.id:
+        if current.distance(finish.x, finish.y) < 30:
             result.append(current)
 
         for adj_id in current.adj:
