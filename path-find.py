@@ -55,8 +55,8 @@ def process(checkpoints):
     print(checkpoints)
     start = path.dots[path.checkpoints[5]]
     prev_start = path.dots[108]
-    best_track = prev_tracks = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoints[1]]])
-    for checkpoint in checkpoints[2:]:
+    best_track = prev_tracks = bfs(prev_start, start,  path.dots[path.checkpoints[checkpoints[0]]])
+    for checkpoint in checkpoints[1:]:
         best_track = []
         for prev_track in prev_tracks:
             track = bfs(prev_track.prev, prev_track,  path.dots[path.checkpoints[checkpoint]])
