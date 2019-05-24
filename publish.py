@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+import sys
 
 import paho.mqtt.client as mqtt
 
-json_str = "{\"team\": 1, \"route\": [5,1,2]}" 
+json_str = "{\"team\": 1, \"route\": [" + sys.argv[1] + "]}" 
 
 if __name__ == '__main__':
 	client = mqtt.Client()

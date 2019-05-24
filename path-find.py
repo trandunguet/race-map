@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-from queue import Queue
+from Queue import Queue
 import math
-
+import sys
 import json
+
 import paho.mqtt.client as mqtt
 
 from path import Dot, Path
@@ -25,7 +26,7 @@ def bfs(prev_start, start, finish):
 
         if current.id == finish.id:
             result.append(current)
-            
+
         for adj_id in current.adj:
             adj = path.dots[adj_id]
 
@@ -83,7 +84,7 @@ def on_message(client, userdata, message):
 	if datastore["team"] == team_id:
 		process([x for x in datastore["route"]])
 
-def init():	
+def init():
 	m_client.on_message=on_message
 	m_client.on_connect = on_connect
 	m_client.connect(broker, 1883, 60)
@@ -91,9 +92,10 @@ def init():
 
 if __name__ == '__main__':
     debug = False
-    # broker="192.168.1.124"  # ip server
+    broker="192.168.1.124"  # ip server
+    if len(sys.argv) == 2:
+        broker=sys.argv[1]
     m_client = mqtt.Client()
-    broker="localhost"
     team_id = 1
 
     path = Path()
